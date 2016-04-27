@@ -224,4 +224,3 @@ func IncrByFloat(RConn *redigo.Conn, key string, incBy float64) (float64, error)
 func DecrByFloat(RConn *redigo.Conn, key string, decrBy float64) (float64, error) {
 	return redigo.Float64((*RConn).Do(REDIS_KEYWORD_DECRBYFLOAT, key, decrBy))
 }
-
