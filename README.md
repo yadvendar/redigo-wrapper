@@ -20,12 +20,13 @@ The Go distribution and [redigo](https://github.com/garyburd/redigo) are the dep
 
 Example
 -------
-Check [main.go](https://github.com/yadvendar/redigo-wrapper/blob/master/main.go) file
+Check [main.go](https://github.com/yadvendar/redigo-wrapper/blob/master/examples/main.go) file
 
 
 License
 -------
 
 Redigo is available under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+
 
 

@@ -35,16 +35,21 @@ func main() {
 	// parse a template to obtain key
 	parsedKey, _ := redis.ParseKey(KEY_TEMPLATE, []string{id})
 
-	// for string
+	// store a string value
 	redis.HSet(RConn, parsedKey, HASH_KEY_STATUS, VALUE_HASH_KEY_STATUS_ACTIVE)
 
+	// read a string value
 	returnedStringValue, err := redis.HGetString(RConn, parsedKey, HASH_KEY_STATUS)
 
 	// for bool
 	hasAccess := true
+	// parse a template to obtain hash key
 	parsedHKey, _ := redis.ParseKey(HASH_KEY_BOOL_TEMPLATE, []string{id})
+
+	// store a bool value
 	redis.HSet(RConn, parsedKey, parsedHKey, hasAccess)
 
+	//read a bool value
 	returnedBoolValue, err := redis.HGetBool(RConn, parsedKey, parsedHKey)
 
 	fmt.Println(returnedStringValue, returnedBoolValue, err)
