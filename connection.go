@@ -185,7 +185,7 @@ func HGetAllString(RConn *redigo.Conn, key string) ([]string, error) {
 }
 
 func Keys(RConn *redigo.Conn, pattern string) ([]string, error) {
-	return redigo.Strings((*RConn).Do(REDIS_KEYWORD_KEYS, getPrefixedKey(pattern)))
+	return redigo.Strings((*RConn).Do(REDIS_KEYWORD_KEYS, pattern))
 }
 
 func HKeys(RConn *redigo.Conn, key string) ([]string, error) {
