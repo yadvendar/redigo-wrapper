@@ -56,11 +56,11 @@ func NewRConnectionPool(c Config) *redigo.Pool {
 		Dial: func() (redigo.Conn, error) {
 			c, err := redigo.Dial("tcp", conf.Server)
 			if err != nil {
-				log.Fatalln("Redis: Dial failed", err)
+				log.Println("redigo-wrapper: Redis: Dial failed", err)
 				return nil, err
 			}
 			if _, err := c.Do("AUTH", conf.Password); err != nil && conf.Password != "" {
-				log.Fatalln("Redis: AUTH failed", err)
+				log.Println("redigo-wrapper: Redis: AUTH failed", err)
 				c.Close()
 				return nil, err
 			}
@@ -69,7 +69,7 @@ func NewRConnectionPool(c Config) *redigo.Pool {
 		TestOnBorrow: func(c redigo.Conn, t time.Time) error {
 			_, err := c.Do("PING")
 			if err != nil {
-				log.Fatalln("Unable to ping to redis server:", err)
+				log.Println("redigo-wrapper: Unable to ping to redis server:", err)
 			}
 			return err
 		},
