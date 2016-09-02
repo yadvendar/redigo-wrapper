@@ -39,8 +39,22 @@ const (
 )
 
 type Config struct {
-	Server              string
-	Password            string
+	Server   string
+	Password string
+	MaxIdle  int // Maximum number of idle connections in the pool.
+
+	// Maximum number of connections allocated by the pool at a given time.
+	// When zero, there is no limit on the number of connections in the pool.
+	MaxActive int
+
+	// Close connections after remaining idle for this duration. If the value
+	// is zero, then idle connections are not closed. Applications should set
+	// the timeout to a value less than the server's timeout.
+	IdleTimeout time.Duration
+
+	// If Wait is true and the pool is at the MaxActive limit, then Get() waits
+	// for a connection to be returned to the pool before returning.
+	Wait                bool
 	KEY_PREFIX          string // prefix to all keys; example is "dev environment name"
 	KEY_DELIMITER       string // delimiter to be used while appending keys; example is ":"
 	KEY_VAR_PLACEHOLDER string // placeholder to be parsed using given arguments to obtain a final key; example is "?"
@@ -51,8 +65,10 @@ var conf Config
 func NewRConnectionPool(c Config) *redigo.Pool {
 	conf = c
 	return &redigo.Pool{
-		MaxIdle:     3,
-		IdleTimeout: 240 * time.Second,
+		MaxIdle:     conf.MaxIdle,
+		IdleTimeout: conf.IdleTimeout,
+		MaxActive:   conf.MaxActive,
+		Wait:        conf.Wait,
 		Dial: func() (redigo.Conn, error) {
 			c, err := redigo.Dial("tcp", conf.Server)
 			if err != nil {
