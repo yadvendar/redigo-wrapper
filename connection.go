@@ -12,6 +12,8 @@ import (
 const (
 	REDIS_KEYWORD_HSET            = "HSET"
 	REDIS_KEYWORD_HGET            = "HGET"
+	REDIS_KEYWORD_HMSET           = "HMSET"
+	REDIS_KEYWORD_HMGET           = "HMGET"
 	REDIS_KEYWORD_HDEL            = "HDEL"
 	REDIS_KEYWORD_HGETALL         = "HGETALL"
 	REDIS_KEYWORD_SET             = "SET"
@@ -170,6 +172,31 @@ func HSet(RConn *redigo.Conn, key string, HKey string, data interface{}) (interf
 func HGet(RConn *redigo.Conn, key string, HKey string) (interface{}, error) {
 	return (*RConn).Do(REDIS_KEYWORD_HGET, key, HKey)
 }
+
+func HMGet(RConn *redigo.Conn, key string, hashKeys ...string) ([]interface{}, error) {
+	ret, err := (*RConn).Do(REDIS_KEYWORD_HMGET, key, hashKeys)
+	if err != nil {
+		return nil, err
+	}
+	reta, ok := ret.([]interface{})
+	if !ok {
+		return nil, errors.New("result not an array")
+	}
+	return reta, nil
+}
+
+func HMSet(RConn *redigo.Conn, key string, hashKeys []string, vals []interface{}) (interface{}, error) {
+	if len(hashKeys) == 0 || len(hashKeys) != len(vals) {
+		var ret interface{}
+		return ret, errors.New("bad length")
+	}
+	input := []interface{}{key}
+	for i, v := range hashKeys {
+		input = append(input, v, vals[i])
+	}
+	return (*RConn).Do(REDIS_KEYWORD_HMSET, input...)
+}
+
 func HGetString(RConn *redigo.Conn, key string, HKey string) (string, error) {
 	return redigo.String((*RConn).Do(REDIS_KEYWORD_HGET, key, HKey))
 }
