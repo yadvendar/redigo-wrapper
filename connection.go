@@ -20,6 +20,7 @@ const (
 	REDIS_KEYWORD_SETNX           = "SETNX"
 	REDIS_KEYWORD_SETEX           = "SETEX"
 	REDIS_KEYWORD_GET             = "GET"
+	REDIS_KEYWORD_TTL             = "TTL"
 	REDIS_KEYWORD_STRLEN          = "STRLEN"
 	REDIS_KEYWORD_EXPIRE          = "EXPIRE"
 	REDIS_KEYWORD_DELETE          = "DEL"
@@ -143,6 +144,10 @@ func SetEx(RConn *redigo.Conn, key string, ttl int, data interface{}) (interface
 func Get(RConn *redigo.Conn, key string) (interface{}, error) {
 	//get
 	return (*RConn).Do(REDIS_KEYWORD_GET, key)
+}
+func GetTTL(RConn *redigo.Conn, key string) (time.Duration, error) {
+	ttl, err := redigo.Int64((*RConn).Do(REDIS_KEYWORD_TTL, key))
+	return time.Duration(ttl) * time.Second, err
 }
 func GetString(RConn *redigo.Conn, key string) (string, error) {
 	return redigo.String((*RConn).Do(REDIS_KEYWORD_GET, key))
