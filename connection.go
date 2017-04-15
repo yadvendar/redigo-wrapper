@@ -272,3 +272,19 @@ func IncrByFloat(RConn *redigo.Conn, key string, incBy float64) (float64, error)
 func DecrByFloat(RConn *redigo.Conn, key string, decrBy float64) (float64, error) {
 	return redigo.Float64((*RConn).Do(REDIS_KEYWORD_DECRBYFLOAT, key, decrBy))
 }
+
+func Scan(RConn *redigo.Conn, cursor int64, pattern string, count int64) (int64, []string, error) {
+	var items []string
+	var newCursor int64
+
+	values, err := redigo.Values((*RConn).Do("SCAN", cursor, "MATCH", pattern, "COUNT", count))
+	if err != nil {
+		return 0, nil, err
+	}
+	values, err = redigo.Scan(values, &newCursor, &items)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return newCursor, items, nil
+}
