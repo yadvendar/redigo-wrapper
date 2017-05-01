@@ -10,6 +10,11 @@ import (
 )
 
 const (
+	REDIS_KEYWORD_SADD            = "SADD"
+	REDIS_KEYWORD_SCARD           = "SCARD"
+	REDIS_KEYWORD_SISMEMBER       = "SISMEMBER"
+	REDIS_KEYWORD_SMEMBERS        = "SMEMBERS"
+	REDIS_KEYWORD_SREM            = "SREM"
 	REDIS_KEYWORD_HSET            = "HSET"
 	REDIS_KEYWORD_HGET            = "HGET"
 	REDIS_KEYWORD_HMSET           = "HMSET"
@@ -170,6 +175,21 @@ func ZRange(RConn *redigo.Conn, key string, start int, end int, withScores bool)
 	}
 	return redigo.Values((*RConn).Do(REDIS_KEYWORD_ZRANGE, key, start, end))
 }
+func SAdd(RConn *redigo.Conn, setName string, data interface{}) (interface{}, error) {
+	return (*RConn).Do(REDIS_KEYWORD_SADD, setName, data)
+}
+func SCard(RConn *redigo.Conn, setName string) (int64, error) {
+	return redigo.Int64((*RConn).Do(REDIS_KEYWORD_SCARD, setName))
+}
+func SIsMember(RConn *redigo.Conn, setName string, data interface{}) (bool, error) {
+	return redigo.Bool((*RConn).Do(REDIS_KEYWORD_SISMEMBER, setName, data))
+}
+func SMembers(RConn *redigo.Conn, setName string) ([]string, error) {
+	return redigo.Strings((*RConn).Do(REDIS_KEYWORD_SMEMBERS, setName))
+}
+func SRem(RConn *redigo.Conn, setName string, data interface{}) (interface{}, error) {
+	return (*RConn).Do(REDIS_KEYWORD_SREM, setName, data)
+}
 func HSet(RConn *redigo.Conn, key string, HKey string, data interface{}) (interface{}, error) {
 	return (*RConn).Do(REDIS_KEYWORD_HSET, key, HKey, data)
 }
@@ -232,6 +252,8 @@ func HGetAllString(RConn *redigo.Conn, key string) ([]string, error) {
 	return redigo.Strings((*RConn).Do(REDIS_KEYWORD_HGETALL, key))
 }
 
+// NOTE: Use this in production environment with extreme care.
+// Read more here:https://redis.io/commands/keys
 func Keys(RConn *redigo.Conn, pattern string) ([]string, error) {
 	return redigo.Strings((*RConn).Do(REDIS_KEYWORD_KEYS, pattern))
 }
