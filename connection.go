@@ -199,7 +199,10 @@ func HGet(RConn *redigo.Conn, key string, HKey string) (interface{}, error) {
 }
 
 func HMGet(RConn *redigo.Conn, key string, hashKeys ...string) ([]interface{}, error) {
-	ret, err := (*RConn).Do(REDIS_KEYWORD_HMGET, key, hashKeys)
+	args := []interface{}{key}
+	args = append(args, hashKeys)
+
+	ret, err := (*RConn).Do(REDIS_KEYWORD_HMGET, args)
 	if err != nil {
 		return nil, err
 	}
