@@ -200,7 +200,9 @@ func HGet(RConn *redigo.Conn, key string, HKey string) (interface{}, error) {
 
 func HMGet(RConn *redigo.Conn, key string, hashKeys ...string) ([]interface{}, error) {
 	args := []interface{}{key}
-	args = append(args, hashKeys)
+	for _, v := range hashKeys {
+		args = append(args, v)
+	}
 
 	ret, err := (*RConn).Do(REDIS_KEYWORD_HMGET, args...)
 	if err != nil {
